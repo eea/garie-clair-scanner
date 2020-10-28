@@ -1,0 +1,14 @@
+{
+  "plugins":{
+        "browsertime": {
+            "cron": "0 */4 * * *",
+            "maxCpus": 2,
+            "cpuUsage": 0.9
+        }
+    },
+  "urls": [
+    {
+      "url": "https://www.eea.europa.eu/"
+    }
+  ]
+}
