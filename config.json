@@ -1,6 +1,6 @@
 {
   "plugins":{
-        "browsertime": {
+        "clair": {
             "cron": "0 */4 * * *",
             "maxCpus": 2,
             "cpuUsage": 0.9
@@ -8,7 +8,12 @@
     },
   "urls": [
     {
-      "url": "https://www.eea.europa.eu/"
+      "url": "https://taskman.eionet.europa.eu",
+      "repo": "https://github.com/eea/eea.rancher.catalog/tree/master/templates/taskman"
+    },
+    {
+      "url": "http://www.eea.europa.eu/",
+      "repo": "https://github.com/eea/eea.rancher.catalog/tree/master/templates/www-plone"
     }
   ]
 }

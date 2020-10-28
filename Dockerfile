@@ -1,6 +1,7 @@
 FROM docker:19.03.13-dind
 
-ENV CLAIR_SCANNER_VERSION=v13
+# v13 does not have binaries yet
+ENV CLAIR_SCANNER_VERSION=v12
 
 RUN apk add --no-cache bash curl coreutils \
  &&  curl -L -o /usr/bin/clair-scanner https://github.com/arminc/clair-scanner/releases/download/$CLAIR_SCANNER_VERSION/clair-scanner_linux_amd64 \
@@ -15,20 +16,19 @@ WORKDIR /usr/src/garie-plugin
 
 COPY package.json .
 
-RUN apk add git
+RUN apk add git dumb-init bash
 
 RUN cd /usr/src/garie-plugin && npm install
-
-RUN apk add dumb-init
-
-#RUN wget https://github.com/Yelp/dumb-init/releases/download/v1.2.2/dumb-init_1.2.2_amd64.deb && \
-#    dpkg -i dumb-init_*.deb
 
 COPY . .
 
 EXPOSE 3000
 
+RUN touch /var/run/docker.sock
+
 VOLUME ["/usr/src/garie-plugin/reports"]
+VOLUME ["/var/run/docker.sock:/var/run/docker.sock"]
+VOLUME ["/cache"]
 
 ENTRYPOINT ["/usr/src/garie-plugin/docker-entrypoint.sh"]
 

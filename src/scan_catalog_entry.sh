@@ -56,7 +56,7 @@ rm -rf  $RANCHER_CATALOG_GITNAME
 
 for image in $all_images; do
   docker pull $image
-  TMPDIR=`pwd` docker run eeacms/jenkins-slave-dind clair-scanner --ip=`hostname` --clair=$CLAIR_URL -t=Critical --all=false  $image
+  TMPDIR=`pwd` clair-scanner --ip=`hostname` --clair=$CLAIR_URL -t=Critical --all=false  $image
   docker rmi $image || true
 done
 
