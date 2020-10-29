@@ -9,11 +9,13 @@
   "urls": [
     {
       "url": "https://taskman.eionet.europa.eu",
-      "repo": "https://github.com/eea/eea.rancher.catalog/tree/master/templates/taskman"
+      "repo": "https://github.com/eea/eea.rancher.catalog.git",
+      "dir": "templates/www-plone"
     },
     {
       "url": "http://www.eea.europa.eu/",
-      "repo": "https://github.com/eea/eea.rancher.catalog/tree/master/templates/www-plone"
+      "repo": "https://github.com/eea/eea.rancher.catalog.git",
+      "dir": "templates/www-plone"
     }
   ]
 }

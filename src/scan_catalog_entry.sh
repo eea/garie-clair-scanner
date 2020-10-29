@@ -2,36 +2,39 @@
 
 set -e
 
-GIT_ORG=${GIT_ORG:-"eea"}
-RANCHER_CATALOG_GITNAME=${RANCHER_CATALOG_PATH:-"eea.rancher.catalog"}
-
 CLAIR_URL=${CLAIR_URL:-"http://clair:6060"}
 
-RANCHER_CATALOG_PATH=${RANCHER_CATALOG_PATH:-$1}
-EXCLUDE_IMAGES=${EXCLUDE_IMAGES:-$2}
+DEPLOYMENT_REPO_URL=${DEPLOYMENT_REPO_URL:-$1}
+SOURCE_DIR=${SOURCE_DIR:-$2}
+EXCLUDE_IMAGES=${EXCLUDE_IMAGES:-$3}
 
-if [ -z "$RANCHER_CATALOG_PATH" ] ; then
-   echo "Problem with script, missing catalog path parameter"
+if [ -z "$DEPLOYMENT_REPO_URL" ] ; then
+   echo "Problem with script, missing deployment repo parameter"
+   exit 1
+fi
+
+if [ -z "$SOURCE_DIR" ] ; then
+   echo "Problem with script, missing source dir parameter"
    exit 1
 fi
 
 
-RANCHER_CATALOG_GITSRC=https://github.com/${GIT_ORG}/${RANCHER_CATALOG_GITNAME}.git
-current_dir=$(pwd)
-
 LOCATION=$(pwd)
 
 # clone the repo
-git clone $RANCHER_CATALOG_GITSRC
+CLONE_PATH="temp-git"
+rm -rf $CLONE_PATH
+git clone $DEPLOYMENT_REPO_URL $CLONE_PATH
 
-cd $RANCHER_CATALOG_GITNAME/$RANCHER_CATALOG_PATH
+cd $CLONE_PATH/$SOURCE_DIR
+echo "changed dir to: $(pwd)"
 
 # get latest rancher entry
-
-
+# TODO - this has the potential to behave differently in the deployment env
 old_version=$(grep version config.yml | awk 'BEGIN{FS="\""}{print $2}')
+echo "old_version is: \"$old_version\""
 
-lastdir=$(grep -l "version: \"$old_version\"" */rancher-compose.yml | awk 'BEGIN{FS="/"}{print $1}')
+last_compose_file=$(grep -l "$old_version" */docker-compose.yml)
 
 if [ -z "$EXCLUDE_IMAGES" ]; then
    EXCLUDE_IMAGES="^( )*rancher/[^:]+$"
@@ -42,16 +45,16 @@ else
 fi
 
 
-echo "Found current rancher catalog entry for $RANCHER_CATALOG_PATH - $lastdir"
+echo "Found current docker-compose for $DEPLOYMENT_REPO_URL - $last_compose_file"
 echo "Will extract images, with the following regex exclusions: '$EXCLUDE_IMAGES'"
 
-all_images=$(grep '  image:' $lastdir/docker-compose* |   cut -d: -f2,3  | sort | uniq  | grep -vE "$EXCLUDE_IMAGES" )
+all_images=$(grep '  image:' $last_compose_file |   cut -d: -f2,3  | sort | uniq  | grep -vE "$EXCLUDE_IMAGES" )
 
 echo "Will start scanning the following images:"
 echo "$all_images"
 
 cd $LOCATION
-rm -rf  $RANCHER_CATALOG_GITNAME
+rm -rf $CLONE_PATH
 
 
 for image in $all_images; do
