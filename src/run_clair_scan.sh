@@ -34,7 +34,7 @@ cd $CLONE_PATH/$SOURCE_DIR
 echo "changed dir to: $CLONE_PATH/$SOURCE_DIR"
 
 # get latest rancher entry
-# TODO - this has the potential to behave differently in the deployment env
+# TODO - this has the potential to behave differently in the deployment env. And of course it does!
 old_version=$(grep version config.yml | awk 'BEGIN{FS="\""}{print $4}')
 echo "old_version is: \"$old_version\""
 
@@ -60,13 +60,15 @@ echo "$all_images"
 cd $LOCATION
 rm -rf $CLONE_PATH
 
+touch clair.txt
 echo "Starting scan"
 
 for image in $all_images; do
   echo "Pulling '$image'"
   docker pull $image
   echo "Pulled $image"
-  TMPDIR=`pwd` clair-scanner --ip=`hostname` --clair=$CLAIR_URL -t=Critical --all=false  $image
+  # TODO: find a better 
+  TMPDIR=`pwd` clair-scanner --ip=$OWN_IP --clair=$CLAIR_URL -t=Critical --all=false $image >> clair.txt
   docker rmi $image || true
 done
 

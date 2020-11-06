@@ -1,15 +1,28 @@
-const garie_plugin = require('garie-plugin')
+const garie_plugin = require('garie-plugin');
+const { resolve } = require('path');
 const path = require('path');
 const config = require('../config');
 
 
 const myGetFile = async (options) => {
-    options.fileName = 'clair.json';
+    options.fileName = 'clair.txt';
     console.log(`myGetFile params: ${options.reportDir} - ${options.fileName}`);
-    const file = await garie_plugin.utils.helpers.getNewestFile(options);
-    const jsonData = JSON.parse(file);
+    var data = { "myMeasurement": 0 };
+    try {
+        const file = await garie_plugin.utils.helpers.getNewestFile(options);
+        if (typeof file !== "undefined") {
+            // Just for testing purposes, give 100 if data could be extracted         
+            data.myMeasurement = 100;
+        }
+        console.log("Got data");
 
-    return jsonData;
+        resolve(data);
+    } catch (err) {
+        console.log(`Could not get data file for ${url}`, err);
+        reject(data);
+    }
+
+    return data;
 }
 
 const myGetData = async (item) => {
@@ -31,12 +44,7 @@ const myGetData = async (item) => {
             data = await garie_plugin.utils.helpers.executeScript(options);
             console.log("Executed script");
 
-            var clear_data = {};
-            Object.keys(data).forEach(function(data_key){
-                clear_data[data_key.replace(/[^\x00-\x7F]/g, "").replace(/\s/g,"")] = data[data_key];
-            });
-
-            resolve(clear_data);
+            resolve(data);
         } catch (err) {
             console.log(`Failed to get data for ${url}`, err);
             reject(`Failed to get data for ${url}`);
@@ -60,8 +68,7 @@ const main = async () => {
         config: config,
         onDemand: true,
       });
-      const cpuUsage = config.plugins['clair'].cpuUsage ? config.plugins['clair'].cpuUsage : 1;
-      console.log('CPUs usage percentage by each thread: ' + cpuUsage * 100 + '%');
+
       app.listen(3000, () => {
         console.log('Application listening on port 3000');
       });
