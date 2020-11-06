@@ -52,7 +52,7 @@ fi
 echo "Found current docker-compose for $DEPLOYMENT_REPO_URL - $last_compose_file"
 echo "Will extract images, with the following regex exclusions: '$EXCLUDE_IMAGES'"
 
-all_images=$(grep '  image:' $last_compose_file |   cut -d: -f2,3  | sort | uniq  | grep -vE "$EXCLUDE_IMAGES" )
+all_images=$(grep '  image:' $last_compose_file |   cut -d: -f3,4  | sort | uniq  | grep -vE "$EXCLUDE_IMAGES" )
 
 echo "Will start scanning the following images:"
 echo "$all_images"
@@ -63,6 +63,7 @@ rm -rf $CLONE_PATH
 echo "Starting scan"
 
 for image in $all_images; do
+  echo "Pulling '$image'"
   docker pull $image
   echo "Pulled $image"
   TMPDIR=`pwd` clair-scanner --ip=`hostname` --clair=$CLAIR_URL -t=Critical --all=false  $image
