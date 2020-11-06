@@ -14,11 +14,11 @@ const myGetFile = async (options) => {
 
 const myGetData = async (item) => {
     const { url } = item.url_settings;
+    const { repo } = item.url_settings;
+    const { dir } = item.url_settings;
 
     return new Promise(async (resolve, reject) => {
         try {
-            const { repo } = item.url_settings.plugins['clair'];
-            const { dir } = item.url_settings.plugins['clair'];
             const { reportDir } = item;
             const options = {
                 script: path.join(__dirname, './run_clair_scan.sh'),

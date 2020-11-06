@@ -60,12 +60,13 @@ echo "$all_images"
 cd $LOCATION
 rm -rf $CLONE_PATH
 
+echo "Starting scan"
 
 for image in $all_images; do
   docker pull $image
+  echo "Pulled $image"
   TMPDIR=`pwd` clair-scanner --ip=`hostname` --clair=$CLAIR_URL -t=Critical --all=false  $image
   docker rmi $image || true
-  echo "All files: $(ls -al)"
 done
 
 echo "Finished scanning"
