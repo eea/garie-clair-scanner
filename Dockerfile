@@ -16,7 +16,7 @@ WORKDIR /usr/src/garie-plugin
 
 COPY package.json .
 
-RUN apk add git dumb-init bash
+RUN apk add git dumb-init
 
 RUN cd /usr/src/garie-plugin && npm install
 
