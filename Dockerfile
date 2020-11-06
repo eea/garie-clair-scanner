@@ -32,4 +32,4 @@ VOLUME ["/cache"]
 
 ENTRYPOINT ["/usr/src/garie-plugin/docker-entrypoint.sh"]
 
-CMD ["/usr/bin/dumb-init", "/bin/sh", "dockerd", ";", "npm", "start"]
+CMD ["/usr/bin/dumb-init", "/bin/sh", "/usr/local/bin/dockerd", ";", "npm", "start"]
