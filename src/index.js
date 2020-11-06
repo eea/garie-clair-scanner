@@ -14,12 +14,11 @@ const myGetFile = async (options) => {
 
 const myGetData = async (item) => {
     const { url } = item.url_settings;
-    const { repo } = item.url_settings;
-    const { dir } = item.url_settings;
 
     return new Promise(async (resolve, reject) => {
         try {
-            const cpuUsage = config.plugins['clair'].cpuUsage ? config.plugins['clair'].cpuUsage : 1;
+            const { repo } = item.url_settings.plugins['clair'];
+            const { dir } = item.url_settings.plugins['clair'];
             const { reportDir } = item;
             const options = {
                 script: path.join(__dirname, './run_clair_scan.sh'),
@@ -28,7 +27,9 @@ const myGetData = async (item) => {
                 params: [ repo, dir, "\"eeacms/www-devel:|eeacms/apache-eea-www:\"" ],
                 callback: myGetFile
             }
+            console.log("Executing script");
             data = await garie_plugin.utils.helpers.executeScript(options);
+            console.log("Executed script");
 
             var clear_data = {};
             Object.keys(data).forEach(function(data_key){
