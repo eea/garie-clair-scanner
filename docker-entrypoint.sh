@@ -7,6 +7,9 @@ if [ -n "$CONFIG" ]; then
         echo "$CONFIG" > /usr/src/garie-plugin/config.json
 fi
 
-# Initialize dockerd and npm
+# Initialize dockerd
+echo "Starting dockerd"
 /usr/bin/dumb-init /usr/local/bin/dockerd
-/usr/bin/dumb-init npm start
+echo "Started dockerd"
+
+exec "$@"
