@@ -19,20 +19,10 @@ if [ -z "$SOURCE_DIR" ] ; then
    exit 1
 fi
 
-
-docker_id=$( cat /proc/self/cgroup | grep :memory: | sed  's#.*/\([0-9a-fA-F]*\)$#\1#' )
-
-REPORTDIR=$(docker inspect $docker_id | grep :/usr/src/garie-plugin/reports | awk -F'["|:]' '{print $2}')
-
-if [[ $2 =~ "on-demand" ]]
-then
-    REPORTDIR="$REPORTDIR/on-demand/"
-fi
-
-mkdir -p $REPORTDIR
+REPORTDIR=$2
 
 echo "Saving reports into $REPORTDIR"
-
+mkdir -p $REPORTDIR
 LOCATION=$REPORTDIR
 
 # clone the repo
