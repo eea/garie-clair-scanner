@@ -1,10 +1,6 @@
 const garie_plugin = require('garie-plugin')
 const path = require('path');
-const fs = require('fs');
 const config = require('../config');
-const bodyParser = require('body-parser');
-const serveIndex = require('serve-index');
-const flatten = require('flat');
 
 
 const myGetFile = async (options) => {
@@ -29,7 +25,7 @@ const myGetData = async (item) => {
                 script: path.join(__dirname, './run_clair_scan.sh'),
                 url: url,
                 reportDir: reportDir,
-                params: [ repo, dir, "" ],
+                params: [ repo, dir, "\"eeacms/www-devel:|eeacms/apache-eea-www:\"" ],
                 callback: myGetFile
             }
             data = await garie_plugin.utils.helpers.executeScript(options);
